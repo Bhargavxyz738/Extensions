@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Tab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <style>
+      :root {
+        --bg-color: #f4f7f9;
+        --text-color: #1a1a1a;
+        --secondary-text-color: #555;
+        --card-bg: #ffffff;
+        --component-bg-color: #f0f3f5; /* For inputs, list items */
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --accent-color: #007aff;
+        --border-color: #e0e0e0;
+        --icon-sun: block;
+        --icon-moon: none;
+        --modal-bg-overlay: rgba(0, 0, 0, 0.4);
+      }
+      /* === START: REFINED DARK THEME PALETTE === */
+      :root.dark-theme {
+        --bg-color: #0d1117;
+        --text-color: #c9d1d9;
+        --secondary-text-color: #8b949e;
+        --card-bg: #161b22;
+        --component-bg-color: #21262d; /* For inputs, list items */
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --accent-color: #2f81f7;
+        --border-color: #30363d;
+        --icon-sun: none;
+        --icon-moon: block;
+        --modal-bg-overlay: rgba(10, 10, 15, 0.6);
+      }
+      /* === END: REFINED DARK THEME PALETTE === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      *::-webkit-scrollbar {
+        width: 8px;
+      }
+      *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      *::-webkit-scrollbar-thumb {
+        background-color: var(--border-color);
+        border-radius: 20px;
+        border: 3px solid transparent;
+        background-clip: content-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        text-align: center;
+        transition: background-color 0.3s, color 0.3s;
+        overflow-y: auto;
+        padding: 4rem 1rem;
+      }
+      body {
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+      body.ready {
+        visibility: visible;
+        opacity: 1;
+      }
+      main {
+        padding: 2rem;
+        max-width: 800px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      a {
+        color: var(--accent-color);
+        text-decoration: none;
+      }
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: inherit;
+        font-family: inherit;
+      }
+      .header-widgets {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 8px;
+        z-index: 10;
+        align-items: center;
+      }
+      .widget-button {
+        background-color: transparent;
+        color: var(--secondary-text-color);
+        padding: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s, color 0.2s;
+      }
+      .widget-button:hover {
+        background-color: color-mix(in srgb, var(--text-color) 8%, transparent);
+        color: var(--text-color);
+      }
+      .widget-button .material-symbols-outlined {
+        font-size: 24px;
+      }
+      #icon-sun {
+        display: var(--icon-sun);
+      }
+      #icon-moon {
+        display: var(--icon-moon);
+      }
+      #weather {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 8px 12px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px var(--shadow-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-color);
+      }
+      #weather .material-symbols-outlined {
+        font-size: 20px;
+        color: var(--accent-color);
+      }
+      #weather .location {
+        color: var(--secondary-text-color);
+        font-weight: 400;
+        margin-left: 2px;
+      }
+      #clock {
+        font-size: 6rem;
+        font-weight: 700;
+        letter-spacing: -3px;
+      }
+      #greeting {
+        font-size: 2.5rem;
+        font-weight: 500;
+        color: var(--secondary-text-color);
+        margin-bottom: 2rem;
+      }
+      #search-form {
+        width: 100%;
+        margin-bottom: 2.5rem;
+      }
+      .search-container {
+        position: relative;
+      }
+      #search-input {
+        width: 100%;
+        padding: 18px 25px 18px 55px;
+        font-size: 1.1rem;
+        border-radius: 30px;
+        border: 1px solid var(--border-color);
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        box-shadow: 0 4px 15px var(--shadow-color);
+        transition: all 0.3s;
+      }
+      #search-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--accent-color) 25%, transparent);
+      }
+      .search-container .material-symbols-outlined {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--secondary-text-color);
+        font-size: 24px;
+      }
+      .quick-links {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .quick-links a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background-color: var(--card-bg);
+        border-radius: 14px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 8px var(--shadow-color);
+        transition: all 0.2s ease-in-out;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: grab;
+      }
+      .quick-links a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px var(--shadow-color);
+      }
+      .quick-links a:active {
+        cursor: grabbing;
+      }
+      .quick-links .favicon {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+      }
+      Generated code
+/* === START: REFINED SETTINGS MODAL STYLES === */
+  #settings-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--modal-bg-overlay);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        color: var(--text-color);
+        padding: 1rem;
+      }
+      .settings-content {
+        width: 100%;
+        max-width: 36rem;
+        margin: auto;
+        background-color: var(--card-bg);
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+      }
+      .settings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .settings-header h2 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+      .settings-header .close-modal-btn {
+        color: var(--secondary-text-color);
+      }
+      .settings-header .close-modal-btn .material-symbols-outlined {
+        font-size: 24px;
+        display: block;
+      }
+      .settings-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+        overflow-y: auto;
+        max-height: calc(100vh - 120px);
+      }
+      .settings-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      .settings-section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-align: left;
+      }
+      .settings-divider {
+        border: none;
+        border-top: 1px solid var(--border-color);
+        margin: 0 -1.5rem; /* Extend to full width */
+      }
+      .settings-form-item label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--secondary-text-color);
+        margin-bottom: 0.5rem;
+        text-align: left;
+      }
+      .settings-input {
+        width: 100%;
+        background-color: var(--component-bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        color: var(--text-color);
+        transition: all 0.2s;
+        font-size: 0.875rem;
+      }
+      .settings-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px
+          color-mix(in srgb, var(--accent-color) 20%, transparent);
+      }
+      /* Toggle Switch */
+      .settings-toggle-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--component-bg-color);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+      }
+      .settings-toggle-item .toggle-text {
+        text-align: left;
+      }
+      .settings-toggle-item .toggle-text h3 {
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: var(--text-color);
+      }
+      .settings-toggle-item .toggle-text p {
+        font-size: 0.75rem;
+        color: var(--secondary-text-color);
+        margin-top: 2px;
+      }
+      .toggle-switch {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        width: 36px;
+        height: 20px;
+        background-color: #30363d;
+        border-radius: 9999px;
+        transition: background-color 0.2s;
+        position: relative;
+      }
+      :root:not(.dark-theme) .toggle-slider {
+        background-color: #ccc;
+      }
+      .toggle-slider::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        background-color: white;
+        border-radius: 50%;
+        height: 16px;
+        width: 16px;
+        transition: all 0.2s;
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background-color: var(--accent-color);
+      }
+      .toggle-switch input:checked + .toggle-slider::after {
+        background-color: white;
+        transform: translateX(16px);
+      }
+      /* Segmented Control */
+      .time-format-item > label {
+        text-align: left;
+      }
+      .time-format-control {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background-color: var(--component-bg-color);
+        padding: 0.25rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+      }
+      .time-format-control label {
+        margin: 0;
+        text-align: center;
+      }
+      .time-format-control input {
+        display: none;
+      }
+      .time-format-control .segment-button {
+        padding: 0.375rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--secondary-text-color);
+      }
+      .time-format-control input:checked + .segment-button {
+        background-color: var(--accent-color);
+        color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      /* Add Shortcut Form */
+      #add-shortcut-form {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-end;
+      }
+      #add-shortcut-form > div {
+        flex-grow: 1;
+      }
+      #add-shortcut-form button {
+        background-color: var(--accent-color);
+        color: white;
+        font-weight: 500;
+        border-radius: 0.375rem;
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        height: 38px;
+        transition: background-color 0.2s;
+        border: none;
+      }
+      #add-shortcut-form button:hover {
+        filter: brightness(1.1);
+      }
+      /* Shortcuts List */
+      #shortcuts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+      }
+      #shortcuts-list li.shortcut-list-item {
+        display: flex;
+        align-items: center;
+        background-color: var(--component-bg-color);
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+        cursor: grab;
+      }
+      #shortcuts-list li.shortcut-list-item:active {
+        cursor: grabbing;
+      }
+      .shortcut-list-item .drag-handle {
+        color: var(--secondary-text-color);
+        cursor: grab;
+        display: flex;
+        align-items: center;
+      }
+      .shortcut-list-item .favicon {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        margin: 0 0.75rem;
+      }
+      .shortcut-info {
+        flex-grow: 1;
+        overflow: hidden;
+        text-align: left;
+        line-height: 1.3;
+        user-select: none;
+      }
+      .shortcut-info .shortcut-name {
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 0.875rem;
+      }
+      .shortcut-info .shortcut-url {
+        font-size: 0.75rem;
+        color: var(--secondary-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .shortcut-list-item .delete-shortcut-btn {
+        display: none; /* Hidden by default */
+        padding: 0.5rem;
+        border-radius: 9999px;
+        color: var(--secondary-text-color);
+        transition: all 0.2s;
+      }
+      .shortcut-list-item:hover .delete-shortcut-btn {
+        display: inline-flex; /* Show on hover */
+      }
+      .shortcut-list-item .delete-shortcut-btn:hover {
+        color: #f87171; /* red-400 */
+        background-color: rgba(239, 68, 68, 0.1);
+      }
+      .delete-shortcut-btn .material-symbols-outlined {
+        font-size: 20px;
+        display: block;
+      }
+      .sortable-ghost {
+        opacity: 0.4;
+        background-color: var(--component-bg-color);
+        border: 1px dashed var(--accent-color);
+      }
+      .sortable-drag {
+        opacity: 0.9;
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px var(--shadow-color);
+      }
+      /* === END: REFINED SETTINGS MODAL STYLES === */
+
+      .usage-tracker {
+        width: 100%;
+        max-width: 600px;
+        margin-top: 2.5rem;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px var(--shadow-color);
+        text-align: left;
+      }
+      .usage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .usage-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      .usage-filter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: var(--secondary-text-color);
+      }
+      .filter-btn {
+        font-size: 0.9rem;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background-color: transparent;
+        border: 1px solid transparent;
+        transition: background-color 0.2s, color 0.2s;
+      }
+      .filter-btn:hover {
+        background-color: var(--shadow-color);
+        color: var(--text-color);
+      }
+      .filter-btn.active {
+        background-color: color-mix(
+          in srgb,
+          var(--accent-color) 15%,
+          transparent
+        );
+        color: var(--accent-color);
+        font-weight: 500;
+      }
+      #usage-list-container {
+        list-style: none;
+        padding: 0;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      #usage-list-container li {
+        display: flex;
+        align-items: center;
+        padding: 12px 5px;
+        gap: 15px;
+      }
+      #usage-list-container li:not(:last-child) {
+        border-bottom: 1px solid var(--border-color);
+      }
+      .usage-favicon {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .usage-host {
+        flex-grow: 1;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .usage-time {
+        font-weight: 400;
+        color: var(--secondary-text-color);
+        font-size: 0.9rem;
+        min-width: 50px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .usage-progress-bar {
+        height: 6px;
+        width: 100px;
+        background-color: var(--border-color);
+        border-radius: 3px;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .usage-progress-fill {
+        height: 100%;
+        background-color: var(--accent-color);
+        border-radius: 3px;
+        width: 0%;
+        transition: width 0.3s ease-in-out;
+      }
+      #total-usage-time {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-color);
+        margin-right: 12px;
+        padding-right: 12px;
+        border-right: 1px solid var(--border-color);
+      }
+      .restore-prompt {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      .restore-prompt.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .prompt-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .prompt-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        border: 1px solid var(--border-color);
+        transition: background-color 0.2s;
+      }
+      .prompt-btn.restore {
+        background-color: var(--accent-color);
+        color: white;
+        border-color: transparent;
+      }
+      .prompt-btn.dismiss:hover {
+        background-color: var(--shadow-color);
+      }
+      @media (max-width: 768px) {
+        body {
+          align-items: flex-start;
+          padding: 1.5rem 0;
+        }
+        main {
+          padding: 1rem;
+        }
+        #clock {
+          font-size: 4rem;
+          letter-spacing: -2px;
+        }
+        #greeting {
+          font-size: 1.8rem;
+        }
+        .header-widgets {
+          position: static;
+          width: 100%;
+          justify-content: flex-end;
+          margin-bottom: 2rem;
+        }
+        .usage-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+        #total-usage-time {
+          border-right: none;
+          padding-right: 0;
+          margin-right: 0;
+          margin-bottom: 8px;
+          width: 100%;
+        }
+        .usage-filter {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+    <script src="theme-loader.js"></script>
+  </head>
+  <body>
+    <main>
+      <div id="time-container">
+        <h1 id="clock"></h1>
+        <h2 id="greeting"></h2>
+      </div>
+      <form
+        id="search-form"
+        action="https://www.google.com/search"
+        method="get"
+      >
+        <div class="search-container">
+          <span class="material-symbols-outlined">search</span>
+          <input
+            type="text"
+            id="search-input"
+            name="q"
+            placeholder="Search Google or type a URL"
+            autocomplete="off"
+          />
+        </div>
+      </form>
+      <div class="quick-links" id="quick-links-container"></div>
+      <div class="usage-tracker">
+        <div class="usage-header">
+          <h3 class="usage-title">Today's Activity</h3>
+          <div class="usage-filter">
+            <span id="total-usage-time"></span>
+            <span>Show:</span>
+            <button class="filter-btn active" data-count="7">Top 7</button>
+            <button class="filter-btn" data-count="15">Top 15</button>
+            <button class="filter-btn" data-count="all">All</button>
+          </div>
+        </div>
+        <ul id="usage-list-container"></ul>
+      </div>
+      <div id="restore-session-prompt" class="restore-prompt">
+        <span>Restore previous tabs?</span>
+        <div class="prompt-buttons">
+          <button id="restore-yes-btn" class="prompt-btn restore">
+            Restore
+          </button>
+          <button id="restore-no-btn" class="prompt-btn dismiss">
+            Dismiss
+          </button>
+        </div>
+      </div>
+      <div class="header-widgets">
+        <div id="weather">
+          <span class="material-symbols-outlined">thermostat</span>
+          <span>Checking...</span>
+        </div>
+        <button
+          class="widget-button"
+          id="theme-toggle"
+          aria-label="Toggle theme"
+        >
+          <span class="material-symbols-outlined" id="icon-sun"
+            >light_mode</span
+          >
+          <span class="material-symbols-outlined" id="icon-moon"
+            >dark_mode</span
+          >
+        </button>
+        <button
+          class="widget-button"
+          id="settings-btn"
+          aria-label="Open settings"
+        >
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+      </div>
+    </main>
+    <!-- ==== REFINED SETTINGS MODAL ==== -->
+    <div id="settings-modal" hidden>
+      <div class="settings-content">
+        <header class="settings-header">
+          <h2>Settings</h2>
+          <button
+            class="widget-button close-modal-btn"
+            aria-label="Close settings"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </header>
+
+        <div class="settings-body">
+          <!-- Section: General -->
+          <section class="settings-section">
+            <h3 class="settings-section-title">
+              <span class="material-symbols-outlined">tune</span>
+              General
+            </h3>
+
+            <div class="settings-form-item">
+              <label for="name-input">Your Name</label>
+              <input
+                type="text"
+                id="name-input"
+                class="settings-input"
+                placeholder="Enter your name"
+              />
+            </div>
+
+            <div class="settings-toggle-item">
+              <div class="toggle-text">
+                <h3>Sync with device theme</h3>
+                <p>Automatically switch between light and dark modes.</p>
+              </div>
+              <label class="toggle-switch" for="device-theme-sync-toggle">
+                <input type="checkbox" id="device-theme-sync-toggle" />
+                <div class="toggle-slider"></div>
+              </label>
+            </div>
+
+            <div class="settings-form-item time-format-item">
+              <label>Time Format</label>
+              <div class="time-format-control">
+                <label>
+                  <input type="radio" name="timeFormat" value="12hr" />
+                  <div class="segment-button">12-Hour</div>
+                </label>
+                <label>
+                  <input type="radio" name="timeFormat" value="24hr" />
+                  <div class="segment-button">24-Hour</div>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <hr class="settings-divider" />
+
+          <!-- Section: Manage Shortcuts -->
+          <section class="settings-section">
+            <h3 class="settings-section-title">
+              <span class="material-symbols-outlined">link</span>
+              Manage Shortcuts
+            </h3>
+
+            <form id="add-shortcut-form">
+              <div class="settings-form-item">
+                <label for="shortcut-name-input">Name</label>
+                <input
+                  type="text"
+                  id="shortcut-name-input"
+                  class="settings-input"
+                  placeholder="e.g. Google"
+                  required
+                />
+              </div>
+              <div class="settings-form-item">
+                <label for="shortcut-url-input">URL</label>
+                <input
+                  type="url"
+                  id="shortcut-url-input"
+                  class="settings-input"
+                  placeholder="https://google.com"
+                  required
+                />
+              </div>
+              <button type="submit">
+                <span class="material-symbols-outlined">add</span>
+                Add
+              </button>
+            </form>
+
+            <ul id="shortcuts-list">
+              <!-- JS will render items here -->
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+    <!-- ==== END OF SETTINGS MODAL ==== -->
+
+    <script src="libs/Sortable.min.js"></script>
+    <script src="scripts.js"></script>
+  </body>
+</html>
