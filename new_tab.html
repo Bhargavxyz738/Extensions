@@ -20,7 +20,7 @@
         --text-color: #1a1a1a;
         --secondary-text-color: #555;
         --card-bg: #ffffff;
-        --component-bg-color: #f0f3f5; /* For inputs, list items */
+        --component-bg-color: #f0f3f5;
         --shadow-color: rgba(0, 0, 0, 0.08);
         --accent-color: #007aff;
         --border-color: #e0e0e0;
@@ -28,13 +28,12 @@
         --icon-moon: none;
         --modal-bg-overlay: rgba(0, 0, 0, 0.4);
       }
-      /* === START: REFINED DARK THEME PALETTE === */
       :root.dark-theme {
         --bg-color: #0d1117;
         --text-color: #c9d1d9;
         --secondary-text-color: #8b949e;
         --card-bg: #161b22;
-        --component-bg-color: #21262d; /* For inputs, list items */
+        --component-bg-color: #21262d; 
         --shadow-color: rgba(0, 0, 0, 0.3);
         --accent-color: #2f81f7;
         --border-color: #30363d;
@@ -42,7 +41,6 @@
         --icon-moon: block;
         --modal-bg-overlay: rgba(10, 10, 15, 0.6);
       }
-      /* === END: REFINED DARK THEME PALETTE === */
       * {
         margin: 0;
         padding: 0;
@@ -301,7 +299,7 @@
       .settings-divider {
         border: none;
         border-top: 1px solid var(--border-color);
-        margin: 0 -1.5rem; /* Extend to full width */
+        margin: 0 -1.5rem;
       }
       .settings-form-item label {
         display: block;
@@ -327,7 +325,6 @@
         box-shadow: 0 0 0 2px
           color-mix(in srgb, var(--accent-color) 20%, transparent);
       }
-      /* Toggle Switch */
       .settings-toggle-item {
         display: flex;
         align-items: center;
@@ -390,7 +387,6 @@
         background-color: white;
         transform: translateX(16px);
       }
-      /* Segmented Control */
       .time-format-item > label {
         text-align: left;
       }
@@ -423,7 +419,6 @@
         color: white;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
-      /* Add Shortcut Form */
       #add-shortcut-form {
         display: flex;
         gap: 0.75rem;
@@ -501,17 +496,17 @@
         text-overflow: ellipsis;
       }
       .shortcut-list-item .delete-shortcut-btn {
-        display: none; /* Hidden by default */
+        display: none;
         padding: 0.5rem;
         border-radius: 9999px;
         color: var(--secondary-text-color);
         transition: all 0.2s;
       }
       .shortcut-list-item:hover .delete-shortcut-btn {
-        display: inline-flex; /* Show on hover */
+        display: inline-flex; 
       }
       .shortcut-list-item .delete-shortcut-btn:hover {
-        color: #f87171; /* red-400 */
+        color: #f87171;
         background-color: rgba(239, 68, 68, 0.1);
       }
       .delete-shortcut-btn .material-symbols-outlined {
@@ -528,8 +523,6 @@
         transform: scale(1.02);
         box-shadow: 0 5px 15px var(--shadow-color);
       }
-      /* === END: REFINED SETTINGS MODAL STYLES === */
-
       .usage-tracker {
         width: 100%;
         max-width: 600px;
@@ -794,7 +787,6 @@
         </button>
       </div>
     </main>
-    <!-- ==== REFINED SETTINGS MODAL ==== -->
     <div id="settings-modal" hidden>
       <div class="settings-content">
         <header class="settings-header">
@@ -808,7 +800,6 @@
         </header>
 
         <div class="settings-body">
-          <!-- Section: General -->
           <section class="settings-section">
             <h3 class="settings-section-title">
               <span class="material-symbols-outlined">tune</span>
@@ -850,10 +841,7 @@
               </div>
             </div>
           </section>
-
           <hr class="settings-divider" />
-
-          <!-- Section: Manage Shortcuts -->
           <section class="settings-section">
             <h3 class="settings-section-title">
               <span class="material-symbols-outlined">link</span>
@@ -886,15 +874,12 @@
                 Add
               </button>
             </form>
-
             <ul id="shortcuts-list">
-              <!-- JS will render items here -->
             </ul>
           </section>
         </div>
       </div>
     </div>
-    <!-- ==== END OF SETTINGS MODAL ==== -->
 
     <script src="libs/Sortable.min.js"></script>
     <script src="scripts.js"></script>
