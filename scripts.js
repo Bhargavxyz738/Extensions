@@ -58,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       renderAll();
       syncThemeUI();
-      // Apply theme on load AFTER settings are loaded
       if (!state.settings.useDeviceTheme) {
         chrome.storage.local.get(["theme"], (result) => {
           applyTheme(result.theme || "light");
@@ -88,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
   deviceThemeSyncToggle.addEventListener("change", (e) => {
     state.settings.useDeviceTheme = e.target.checked;
     saveSettings();
-    syncThemeUI(); // This handles applying the correct theme
+    syncThemeUI(); 
     if (!e.target.checked) {
       chrome.storage.local.get(["theme"], (result) => {
         applyTheme(result.theme || "light");
@@ -127,9 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const query = document.getElementById("search-input").value.trim();
     if (!query) return;
     try {
-      // Check if it's a valid URL structure, but not necessarily a full one
       const url = new URL(query.includes("://") ? query : `https://${query}`);
-      // Check for a plausible domain
       if (url.hostname.includes(".")) {
         window.location.href = url.href;
       } else {
@@ -230,40 +227,29 @@ document.addEventListener("DOMContentLoaded", () => {
       if (sessionResult[PROMPT_SHOWN_KEY]) {
         return;
       }
-      // Get the last closed session
       chrome.sessions.getRecentlyClosed({ maxResults: 1 }, (sessions) => {
-        // Ensure the session exists and it was a window with multiple tabs
         const lastSession = sessions.find(
           (s) => s.window && s.window.tabs.length > 1
         );
         if (lastSession) {
           chrome.storage.session.set({ [PROMPT_SHOWN_KEY]: true });
           promptElement.classList.add("visible");
-          dismissTimeout = setTimeout(hidePrompt, 8000); // Increased timeout
-
-          // **THIS IS THE CORRECTED LOGIC**
+          dismissTimeout = setTimeout(hidePrompt, 8000); 
           yesBtn.addEventListener(
             "click",
             () => {
               const tabsToRestore = lastSession.window.tabs;
               if (tabsToRestore && tabsToRestore.length > 0) {
-                // Take the first tab to update the current page
                 const firstTab = tabsToRestore.shift();
-
                 chrome.tabs.getCurrent((currentTab) => {
-                  // Update the current "New Tab" page to the first restored tab's URL
                   if (currentTab) {
                     chrome.tabs.update(currentTab.id, { url: firstTab.url });
                   } else {
-                    // Fallback if we can't get the current tab
                     chrome.tabs.create({ url: firstTab.url, active: true });
                   }
                 });
-
-                // Open the rest of the tabs in the background of the current window
                 tabsToRestore.forEach((tab) => {
                   if (tab.url) {
-                    // Ensure the tab has a URL
                     chrome.tabs.create({
                       url: tab.url,
                       active: false,
@@ -275,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             { once: true }
           );
-
           noBtn.addEventListener("click", hidePrompt, { once: true });
         }
       });
@@ -286,7 +271,6 @@ document.addEventListener("DOMContentLoaded", () => {
     quickLinksContainer.innerHTML = "";
     shortcutsListContainer.innerHTML = "";
     state.settings.shortcuts.forEach((shortcut, index) => {
-      // Main page quick links
       const shortcutLink = document.createElement("a");
       shortcutLink.href = shortcut.url;
       shortcutLink.draggable = true;
@@ -294,8 +278,6 @@ document.addEventListener("DOMContentLoaded", () => {
         new URL(shortcut.url).hostname
       }" class="favicon" alt=""><span>${shortcut.name}</span>`;
       quickLinksContainer.appendChild(shortcutLink);
-
-      // Settings modal list items
       const listItem = document.createElement("li");
       listItem.className = "shortcut-list-item";
       listItem.dataset.id = index;
@@ -314,7 +296,6 @@ document.addEventListener("DOMContentLoaded", () => {
       shortcutsListContainer.appendChild(listItem);
     });
   }
-
   document
     .getElementById("settings-btn")
     .addEventListener("click", () => (settingsModal.style.display = "flex"));
@@ -460,13 +441,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- Initial calls ---
   loadSettings();
   fetchWeather();
   renderUsageData();
   setInterval(updateTimeAndGreeting, 1000 * 30);
   setupSessionRestore();
-
-  // Make body visible after initial setup to prevent FOUC
   document.body.classList.add("ready");
 });
